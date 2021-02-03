@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Task
 {
-    /**
+    /** 
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
