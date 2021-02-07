@@ -18,6 +18,7 @@
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
+        "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.5",
         "fzaninotto/faker": "^1.9",
         "incenteev/composer-parameter-handler": "^2.0",
