@@ -17,7 +17,9 @@ class UserController extends AbstractController
      */
     public function listAction()
     {
-        return $this->render('user/list.html.twig', ['users' => $this->getDoctrine()->getRepository('App:User')->findAll()]);
+        $users = $this->getDoctrine()->getRepository('App:User')->findAll();
+        
+        return $this->render('user/list.html.twig', ['users' => $users]);
     }
 
     /**
@@ -29,8 +31,9 @@ class UserController extends AbstractController
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
+
             $em = $this->getDoctrine()->getManager();
             $password = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
@@ -58,8 +61,15 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
+            
+            if ($user->getRoles() === array('ROLE_USER')) {
+                $user->setRoles(null); 
+            }
+            
+            $em = $this->getDoctrine()->getManager();
 
-            $this->getDoctrine()->getManager()->flush();
+            $em->persist($user);
+            $em->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
 

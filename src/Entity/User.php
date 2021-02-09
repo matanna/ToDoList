@@ -46,6 +46,11 @@ class User implements UserInterface
      */
     private $tasks;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $roles = [];
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -93,7 +98,10 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return array('ROLE_USER');
+        if ($this->roles === null) {
+            return array('ROLE_USER');
+        }
+        return $this->roles;
     }
 
     public function eraseCredentials()
@@ -126,6 +134,13 @@ class User implements UserInterface
                 $task->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function setRoles(?array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
