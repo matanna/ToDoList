@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Form\TaskType;
 use App\Utils\ControlAuthor;
+use App\Utils\TaskRemoveAuthorization;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -93,14 +94,22 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
-    public function deleteTaskAction(Task $task)
+    public function deleteTaskAction(Task $task, TaskRemoveAuthorization $taskRemoveAuthorization)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        $currentUser = $this->getUser();
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+        $removeIsOk = $taskRemoveAuthorization->taskRemove($task);
 
+        if ($removeIsOk) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($task);
+            $em->flush();
+
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+            return $this->redirectToRoute('task_list');
+        }
+
+        $this->addFlash('error', 'Vous n\'êtes pas autorisé à supprimer cette tâche !');
         return $this->redirectToRoute('task_list');
     }
 }
