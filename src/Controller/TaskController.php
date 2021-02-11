@@ -109,8 +109,7 @@ class TaskController extends AbstractController
             return $this->redirectToRoute('task_list');
         }
 
-        $msg = $this->addFlash('failed !', 'Vous ne pouvez pas supprimer cette tâche !');
-        
+        $this->addFlash('error', 'Vous n\'êtes pas autorisé à supprimer cette tâche !');
         return $this->redirectToRoute('task_list');
     }
 }
