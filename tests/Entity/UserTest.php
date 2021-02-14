@@ -3,15 +3,18 @@
 namespace App\Tests\Entity;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
+use App\Tests\RandomString;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class UserTest extends KernelTestCase
 {
+    use ValidateEntityTrait;
+
+    /**
+     * This function create a valid user
+     */
     public function getValidUser()
     {
-        //We create a valid user
         $user = new User();
         $user->setUsername('usernameisok');
         $user->setPassword('passwordisok');
@@ -21,20 +24,9 @@ class UserTest extends KernelTestCase
         return $user; 
     }
 
-    public function validateEntity($entity)
-    {
-        //We call the Kernel for recover the Validator Symfony Service and validate the object/entity just create
-        self::bootKernel();
-        $errors = self::$container->get('validator')->validate($entity);
-
-        //We recover errors messages for debug
-        $messages = [];
-        foreach ($errors as $error) {
-            $messages[] = $error->getPropertyPath() . ' => ' . $error->getMessage() . ' // ';
-        }
-        return [$errors, $messages];
-    }
-
+    /**
+     * Test a valid user
+     */
     public function testValidUserEntity()
     {
         $user = $this->getValidUser();
@@ -58,18 +50,58 @@ class UserTest extends KernelTestCase
             $this->assertEquals($user->getUsername(), $userInDatabase->getUsername());
         } else {
 
-            //if 
             $this->assertCount(1, $results[0], implode($results[1]));
-        }
-        
+        } 
     }
 
     public function invalidUser()
     {
+        $generate = new RandomString();
         return [
             ['existingUser'],
             [''], 
-            ['abcdefghijklmnopqrstuvwxyz'] 
+            [$generate->createString(26)] 
+        ];
+    }
+
+    /**
+     * @dataProvider invalidPassword
+     */
+    public function testInvalidPassword($invalidPassword)
+    {
+        $user = $this->getValidUser();
+        $user->setPassword($invalidPassword);
+        $results = $this->validateEntity($user);
+        $this->assertCount(1, $results[0], implode($results[1]));
+    }
+
+    public function invalidPassword()
+    {
+        $generate = new RandomString();
+        return [
+            [''],
+            [$generate->createString(65)] 
+        ];
+    }
+
+    /**
+     * @dataProvider invalidEmail
+     */
+    public function testInvalidEmail($invalidEmail)
+    {
+        $user = $this->getValidUser();
+        $user->setEmail($invalidEmail);
+        $results= $this->validateEntity($user);
+        $this->assertCount(1, $results[0], implode($results[1]));
+    }
+
+    public function invalidEmail()
+    {
+        return [
+            [''],
+            ['emaildomain.com'],
+            ['email@domain'],
+            ['@domain.com']
         ];
     }
 } 

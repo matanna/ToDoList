@@ -33,6 +33,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank(message="Vous devez saisir un mot de passe.")
+     * @Assert\Length(max=64, maxMessage="Votre nom d'utilisateur est trop long.")
      */
     private $password;
 
