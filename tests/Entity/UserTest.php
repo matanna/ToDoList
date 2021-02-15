@@ -8,60 +8,59 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class UserTest extends KernelTestCase
 {
-    use ValidateEntityTrait;
+    use SetUpEntityTrait;
 
     /**
-     * This function create a valid user
-     */
-    public function getValidUser()
-    {
-        $user = new User();
-        $user->setUsername('usernameisok');
-        $user->setPassword('passwordisok');
-        $user->setEmail('emailisok@domain.com');
-        $user->setRoles(['ROLE_USER']);
-
-        return $user; 
-    }
-
-    /**
-     * Test a valid user
+     * This function test the valid user
      */
     public function testValidUserEntity()
     {
-        $user = $this->getValidUser();
-        $results = $this->validateEntity($user);
+        $results = $this->validateEntity($this->user);
         $this->assertCount(0, $results[0], implode($results[1]));
     }
 
+    public function testGetId()
+    {
+        $user = $this->em->getRepository(User::class)->find(1);
+        $this->assertEquals($user->getId(), 1);
+    }
+
+    public function testGetUsername()
+    {
+        $this->assertSame('usernameisok', $this->user->getUsername());
+    }
+
     /**
-     * @dataProvider invalidUser
+     * @dataProvider invalidUsername
      */
     public function testInvalidUsername($invalidUsername)
     {
-        $user = $this->getValidUser();
-        $user->setUsername($invalidUsername);
-        $results = $this->validateEntity($user);
+        $this->user->setUsername($invalidUsername);
+        $results = $this->validateEntity($this->user);
 
         if ($results[0]->has(0) === false) {
             //If the user exist in database
-            $em = self::$container->get('doctrine.orm.entity_manager');
-            $userInDatabase = $em->getRepository(User::class)->findOneBy(['username' => $invalidUsername]);
-            $this->assertEquals($user->getUsername(), $userInDatabase->getUsername());
-        } else {
+            $userInDatabase = $this->em->getRepository(User::class)->findOneBy(['username' => $invalidUsername]);
+            $this->assertEquals($this->user->getUsername(), $userInDatabase->getUsername());
 
+        } else {
             $this->assertCount(1, $results[0], implode($results[1]));
         } 
     }
 
-    public function invalidUser()
+    public function invalidUsername()
     {
         $generate = new RandomString();
         return [
-            ['existingUser'],
-            [''], 
-            [$generate->createString(26)] 
+            ['existingUser'],              //User who existing in database
+            [''],                          //Blank
+            [$generate->createString(26)]  //Test a username with 26 characters (max is 25)
         ];
+    }
+
+    public function testGetPassword()
+    {
+        $this->assertSame('passwordisok', $this->user->getPassword());
     }
 
     /**
@@ -69,9 +68,8 @@ class UserTest extends KernelTestCase
      */
     public function testInvalidPassword($invalidPassword)
     {
-        $user = $this->getValidUser();
-        $user->setPassword($invalidPassword);
-        $results = $this->validateEntity($user);
+        $this->user->setPassword($invalidPassword);
+        $results = $this->validateEntity($this->user);
         $this->assertCount(1, $results[0], implode($results[1]));
     }
 
@@ -79,9 +77,14 @@ class UserTest extends KernelTestCase
     {
         $generate = new RandomString();
         return [
-            [''],
-            [$generate->createString(65)] 
+            [''],                           //Blank
+            [$generate->createString(65)]   //Test a password with 65 characters (max is 64)
         ];
+    }
+
+    public function testGetEmail()
+    {
+        $this->assertSame('emailisok@domain.com', $this->user->getEmail());
     }
 
     /**
@@ -89,19 +92,46 @@ class UserTest extends KernelTestCase
      */
     public function testInvalidEmail($invalidEmail)
     {
-        $user = $this->getValidUser();
-        $user->setEmail($invalidEmail);
-        $results= $this->validateEntity($user);
+        $this->user->setEmail($invalidEmail);
+        $results= $this->validateEntity($this->user);
         $this->assertCount(1, $results[0], implode($results[1]));
     }
 
     public function invalidEmail()
     {
         return [
-            [''],
-            ['emaildomain.com'],
-            ['email@domain'],
-            ['@domain.com']
+            [''],                   //Blank
+            ['emaildomain.com'],    //Email without @
+            ['email@domain'],       //Email without extension (.com, ...)
+            ['@domain.com']         //Email without domain
         ];
     }
-} 
+
+    public function testGetRolesIsNull()
+    {
+        $this->user->setRoles(null);
+        $this->assertSame(['ROLE_USER'], $this->user->getRoles());
+    }
+
+    public function testGetRolesIsNotNull()
+    {
+        $this->user->setRoles(['ROLE_ADMIN']);
+        $this->assertSame(['ROLE_ADMIN'], $this->user->getRoles());
+    }
+
+    public function testAddTask()
+    {
+        $this->user->addTask($this->task);
+        $this->assertEquals(1, count($this->user->getTasks()));
+        $this->assertInstanceOf('App\Entity\Task', $this->user->getTasks()[0]);
+    }
+
+    public function testRemoveTask()
+    {
+        $this->user->addTask($this->task);
+        $this->user->removeTask($this->user->getTasks()[0]);
+        $this->assertEquals(0, count($this->user->getTasks()));
+    }
+
+
+}
