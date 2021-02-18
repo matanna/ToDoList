@@ -12,31 +12,96 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class DefaultControllerTest extends WebTestCase
 {
+    use ControllerTrait;
+
     private $client;
+
+    private $crawler;
 
     public function setUp(): void
     {
         $this->client = static::createClient();
+        $this->crawler = $this->client->request('GET', '/');
+    }
+
+    public function loginAnAdmin()
+    {
+        //Follow redirecting for save login page crawler 
+        $this->crawler = $this->client->followRedirect();
+
+        //Login a user
+        $this->logIn('adminUser', 'adminPassword');
+
+        //Follow redirecting after login for save homepage page crawler
+        $this->crawler = $this->client->followRedirect();
+    }
+
+    public function logInAUser()
+    {
+         //Follow redirecting for save login page crawler 
+         $this->crawler = $this->client->followRedirect();
+
+         //Login a user
+         $this->logIn('existingUser', 'password');
+ 
+         //Follow redirecting after login for save homepage page crawler
+         $this->crawler = $this->client->followRedirect();
     }
     
     public function testHomepageUserNoLogin() 
     {
-        $this->client->request('GET', '/');
+        //Test redirecting if no user login
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testHomepageUserLogin()
     {
-        
-        $crawler = $this->client->request('POST', '/login');
-        $form = $crawler->selectButton('Se connecter')->form([
-            '_username' => 'existingUser',
-            '_password' => 'password'
-        ]);
-        $this->client->submit($form);
-        
-        $this->client->request('GET', '/');
-        $this->assertResponseStatusCodeSame(200);
+        $this->loginAUser();
+
+        //Test the page homepage
+        $this->assertSelectorTextContains('h1', 'Bienvenue sur Todo List');
     }
     
+    public function testNoManageUserForRoleUser()
+    {
+        $this->loginAUser();
+
+        $this->assertSame(0, $this->crawler->filter('a:contains("Créer un utilisateur")')->count());
+        $this->assertSame(0, $this->crawler->filter('a:contains("Voir les utilisateurs")')->count());
+    }
+
+    public function testManageUserForRoleAdmin()
+    {
+        $this->loginAnAdmin();
+
+        $this->assertSame(1, $this->crawler->filter('a:contains("Créer un utilisateur")')->count());
+        $this->assertSame(1, $this->crawler->filter('a:contains("Voir les utilisateurs")')->count());
+    }
+
+    public function testLinkCreateNewTask()
+    {
+        $this->loginAUser();
+
+        $this->client->clickLink("Créer une nouvelle tâche");
+        $this->assertResponseStatusCodeSame('200');
+        $this->assertRouteSame('task_create');   
+    }
+
+    public function testLinkDisplayAllTasks()
+    {
+        $this->loginAUser();
+
+        $this->client->clickLink("Consulter la liste des tâches à faire");
+        $this->assertResponseStatusCodeSame('200');
+        $this->assertRouteSame('task_list');   
+    }
+
+    public function testLinkDisplayTasksIsDone()
+    {
+        $this->loginAUser();
+
+        $this->client->clickLink("Consulter la liste des tâches terminées");
+        $this->assertResponseStatusCodeSame('200');
+        $this->assertRouteSame('task_isDone');   
+    }
 }

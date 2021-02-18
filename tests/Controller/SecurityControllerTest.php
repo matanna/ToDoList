@@ -2,14 +2,8 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\User;
-use Symfony\Component\BrowserKit\Cookie;
 use App\Tests\Controller\ControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class SecurityControllerTest extends WebTestCase
 {
@@ -33,32 +27,59 @@ class SecurityControllerTest extends WebTestCase
     }
 
     //Test the login form when a user is connect successfull
-    public function testConnectWithLoginForm()
+    public function testSuccessConnectWithLoginForm()
     {
         $this->logIn('existingUser', 'password');
+
+        //Test redirect
         $this->assertResponseStatusCodeSame('302');
         $this->client->followRedirect();
+
+        //Test result of redirecting
         $this->assertRouteSame('homepage');
-        $this->assertSelectorTextContains('h1', 'Bienvenue sur Todo List');
+
+        //Test the login user and compare with database
+        $this->assertSame($this->getUserLogin(), $this->getUserInDatabase());
     }
 
     //Test the login form when a user is not connect successfull
-    public function testNoConnectWithLoginForm()
+    public function testBadConnectWithLoginForm()
     {
         $this->logIn('badUser', 'badPassword');
+
+        //Test redirect
         $this->assertResponseStatusCodeSame('302');
         $this->client->followRedirect();
+
+        //Test result of redirecting
         $this->assertRouteSame('login');
+
+        //Test no login user
+        $this->assertSame($this->getUserLogin(), "anon.");
     }
 
     //Test the logout 
     public function testLogout()
     {
+        //First, we login the user
         $this->logIn('existingUser', 'password');
         $this->client->followRedirect();
-        dd($this->crawler);
-        $link = $this->crawler->selectLink('Se déconnecter')->link();
-        $this->client->click($link);
-        //$this->assertRouteSame('login');
+
+        //Then, we disconnect the user
+        $this->client->clickLink("Se déconnecter");
+
+        //Test redirect when click on logout link
+        $this->assertResponseStatusCodeSame('302');
+        $this->assertRouteSame('logout');
+
+        $this->client->followRedirect();
+
+        //Test result of redirecting
+        $this->client->followRedirect();
+
+        $this->assertRouteSame('login');
+
+        //Test user is logout
+        $this->assertSame($this->getUserLogin(), "anon.");
     }
 }
