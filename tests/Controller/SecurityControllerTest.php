@@ -39,7 +39,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertRouteSame('homepage');
 
         //Test the login user and compare with database
-        $this->assertSame($this->getUserLogin(), $this->getUserInDatabase());
+        $this->assertSame($this->getUserLogin(), $this->getUserInDatabase('existingUser'));
     }
 
     //Test the login form when a user is not connect successfull

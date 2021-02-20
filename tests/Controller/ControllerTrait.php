@@ -21,15 +21,42 @@ trait ControllerTrait
         return self::$container->get('security.token_storage')->getToken()->getUser();
     }
 
-    protected function getUserInDatabase()
+    protected function getUserInDatabase($username)
     {
         $em = self::$container->get('doctrine.orm.entity_manager');
-        return $em->getRepository(User::class)->find(1);
+        return $em->getRepository(User::class)->findOneBy(['username' => $username]);
     }
 
-    public function addUserLogin()
+    protected function loginAnAdmin()
     {
-        
+        //Follow redirecting for save login page crawler 
+        $this->crawler = $this->client->followRedirect();
+
+        //Login a user
+        $this->logIn('adminUser', 'adminPassword');
+
+        //Follow redirecting after login for save homepage page crawler
+        $this->crawler = $this->client->followRedirect();
+    }
+
+    protected function logInAUser()
+    {
+         //Follow redirecting for save login page crawler 
+         $this->crawler = $this->client->followRedirect();
+
+         //Login a user
+         $this->logIn('existingUser', 'password');
+ 
+         //Follow redirecting after login for save homepage page crawler
+         $this->crawler = $this->client->followRedirect();
+    }
+
+    protected function deleteUser($username)
+    {
+        $em = self::$container->get('doctrine.orm.entity_manager');
+        $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+        $em->remove($user);
+        $em->flush();
     }
 
 }

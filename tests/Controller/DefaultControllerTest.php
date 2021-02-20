@@ -23,30 +23,6 @@ class DefaultControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->crawler = $this->client->request('GET', '/');
     }
-
-    public function loginAnAdmin()
-    {
-        //Follow redirecting for save login page crawler 
-        $this->crawler = $this->client->followRedirect();
-
-        //Login a user
-        $this->logIn('adminUser', 'adminPassword');
-
-        //Follow redirecting after login for save homepage page crawler
-        $this->crawler = $this->client->followRedirect();
-    }
-
-    public function logInAUser()
-    {
-         //Follow redirecting for save login page crawler 
-         $this->crawler = $this->client->followRedirect();
-
-         //Login a user
-         $this->logIn('existingUser', 'password');
- 
-         //Follow redirecting after login for save homepage page crawler
-         $this->crawler = $this->client->followRedirect();
-    }
     
     public function testHomepageUserNoLogin() 
     {
