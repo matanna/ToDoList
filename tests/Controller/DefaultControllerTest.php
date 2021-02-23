@@ -2,13 +2,7 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\User;
-use App\Controller\DefaultController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class DefaultControllerTest extends WebTestCase
 {
@@ -33,25 +27,9 @@ class DefaultControllerTest extends WebTestCase
     public function testHomepageUserLogin()
     {
         $this->loginAUser();
-
+        
         //Test the page homepage
         $this->assertSelectorTextContains('h1', 'Bienvenue sur Todo List');
-    }
-    
-    public function testNoManageUserForRoleUser()
-    {
-        $this->loginAUser();
-
-        $this->assertSame(0, $this->crawler->filter('a:contains("Créer un utilisateur")')->count());
-        $this->assertSame(0, $this->crawler->filter('a:contains("Voir les utilisateurs")')->count());
-    }
-
-    public function testManageUserForRoleAdmin()
-    {
-        $this->loginAnAdmin();
-
-        $this->assertSame(1, $this->crawler->filter('a:contains("Créer un utilisateur")')->count());
-        $this->assertSame(1, $this->crawler->filter('a:contains("Voir les utilisateurs")')->count());
     }
 
     public function testLinkCreateNewTask()

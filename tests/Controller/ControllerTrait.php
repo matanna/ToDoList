@@ -13,6 +13,7 @@ trait ControllerTrait
             '_username' => $username,
             '_password' => $password
         ]);
+        
         $this->client->submit($form);
     }
 
@@ -31,7 +32,7 @@ trait ControllerTrait
     {
         //Follow redirecting for save login page crawler 
         $this->crawler = $this->client->followRedirect();
-
+        
         //Login a user
         $this->logIn('adminUser', 'adminPassword');
 
