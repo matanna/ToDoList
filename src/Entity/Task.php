@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * @ORM\Table("task")
  * @ORM\Entity
- * @ORM\Table
  */
 class Task
 {
@@ -41,7 +41,7 @@ class Task
     private $isDone;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tasks")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tasks", cascade={"persist"})
      */
     private $user;
 
@@ -103,6 +103,9 @@ class Task
 
     public function setUser(?User $user): self
     {
+        if ($this->user) {
+            return $this;
+        }
         $this->user = $user;
 
         return $this;

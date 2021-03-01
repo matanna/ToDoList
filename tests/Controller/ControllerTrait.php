@@ -2,11 +2,13 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Task;
 use App\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 trait ControllerTrait
 {
+
     protected function logIn($username, $password)
     {
         $form = $this->crawler->selectButton('Se connecter')->form([
@@ -58,6 +60,21 @@ trait ControllerTrait
         $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
         $em->remove($user);
         $em->flush();
+    }
+
+    protected function getTaskInDatabase($title)
+    {
+        $em = self::$container->get('doctrine.orm.entity_manager');
+        return $em->getRepository(Task::class)->findOneBy(['title' => $title]);
+    }
+
+    protected function deleteTask($title)
+    {
+        $em = self::$container->get('doctrine.orm.entity_manager');
+        $task = $em->getRepository(Task::class)->findOneBy(['title' => $title]);
+        $em->remove($task);
+        $em->flush();
+        return $em->getRepository(Task::class)->findOneBy(['title' => $title]);
     }
 
 }

@@ -2,7 +2,6 @@
 
 namespace App\Tests\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
 use App\Tests\Controller\UserControllerTest;
 
 class CreateUserControllerTest extends UserControllerTest

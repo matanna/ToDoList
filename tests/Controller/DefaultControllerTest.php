@@ -31,31 +31,4 @@ class DefaultControllerTest extends WebTestCase
         //Test the page homepage
         $this->assertSelectorTextContains('h1', 'Bienvenue sur Todo List');
     }
-
-    public function testLinkCreateNewTask()
-    {
-        $this->loginAUser();
-
-        $this->client->clickLink("Créer une nouvelle tâche");
-        $this->assertResponseStatusCodeSame('200');
-        $this->assertRouteSame('task_create');   
-    }
-
-    public function testLinkDisplayAllTasks()
-    {
-        $this->loginAUser();
-
-        $this->client->clickLink("Consulter la liste des tâches à faire");
-        $this->assertResponseStatusCodeSame('200');
-        $this->assertRouteSame('task_list');   
-    }
-
-    public function testLinkDisplayTasksIsDone()
-    {
-        $this->loginAUser();
-
-        $this->client->clickLink("Consulter la liste des tâches terminées");
-        $this->assertResponseStatusCodeSame('200');
-        $this->assertRouteSame('task_isDone');   
-    }
 }
