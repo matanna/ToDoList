@@ -27,5 +27,7 @@ class TaskRemoveAuthorization
         if ($task->getUser()->getId() === $this->user->getId()) {
             return true;
         }
+        
+        return false;
     }
 }

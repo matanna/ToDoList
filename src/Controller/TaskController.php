@@ -85,7 +85,7 @@ class TaskController extends AbstractController
     {
         $task->toggle(!$task->isDone());
         $this->getDoctrine()->getManager()->flush();
-
+        
         $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
 
         return $this->redirectToRoute('task_list');
@@ -111,5 +111,19 @@ class TaskController extends AbstractController
 
         $this->addFlash('error', 'Vous n\'êtes pas autorisé à supprimer cette tâche !');
         return $this->redirectToRoute('task_list');
+    }
+
+    /**
+     * @Route("/tasks/isDone", name="task_isDone")
+     */
+    public function tasksIsDoneAction(ControlAuthor $controlAuthor)
+    {
+        $tasks = $this->getDoctrine()->getRepository('App:Task')->findBy(['isDone' => 1]);
+
+        foreach ($tasks as $task) {
+            $controlAuthor->controlTaskAuthor($task);
+        }
+
+        return $this->render('task/tasksIsDone.html.twig', ['tasks' => $tasks]);
     }
 }
