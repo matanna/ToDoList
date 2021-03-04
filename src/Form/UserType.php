@@ -32,11 +32,7 @@ class UserType extends AbstractType
                 'required' => true,
                 'multiple' => false,
                 'expanded' => false,
-                'choices' => [
-                    'Administrateur' => 'ROLE_ADMIN',
-                    'Utilisateur' => 'ROLE_USER'
-                ]
-                
+                'choices' => ['Administrateur' => 'ROLE_ADMIN','Utilisateur' => 'ROLE_USER']   
             ])
         ;
         //roles field data transformer
