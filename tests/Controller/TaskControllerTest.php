@@ -36,9 +36,9 @@ class TaskControllerTest extends WebTestCase
         $task->setContent('newContent');
         $task->setUser($this->getUserLogin());
         $task->setIsDone(false);
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $em->persist($task);
-        $em->flush();
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $manager->persist($task);
+        $manager->flush();
         $task = $this->getTaskInDatabase('newTitle');
         return $task;
     }
@@ -48,9 +48,9 @@ class TaskControllerTest extends WebTestCase
         $task = new Task();
         $task->setTitle('anonymTitle');
         $task->setContent('anonymContent');
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $em->persist($task);
-        $em->flush();
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $manager->persist($task);
+        $manager->flush();
         $task = $this->getTaskInDatabase('anonymTitle');
         return $task;
     }

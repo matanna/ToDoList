@@ -29,8 +29,8 @@ class ListUserControllerTest extends UserControllerTest
         $this->assertResponseStatusCodeSame('200');
         $this->assertSelectorTextContains('h1', 'Liste des utilisateurs');
 
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $users = $em->getRepository(User::class)->findAll();
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $users = $manager->getRepository(User::class)->findAll();
         $nbUsers = count($users);
         $this->assertEquals($nbUsers, $this->crawler->filter('tbody tr')->count());
     }
