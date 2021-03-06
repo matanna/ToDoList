@@ -52,8 +52,8 @@ class ModifyUserControllerTest extends UserControllerTest
         $this->assertSame(['ROLE_ADMIN'], $userInDatabase->getRoles());
         
         $userInDatabase->setRoles([]);
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $em->persist($userInDatabase);
-        $em->flush();
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $manager->persist($userInDatabase);
+        $manager->flush();
     }
 }

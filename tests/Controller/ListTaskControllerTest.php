@@ -21,8 +21,8 @@ class ListTaskControllerTest extends TaskControllerTest
         $this->crawler = $this->client->request('GET', '/tasks');
         $this->assertResponseStatusCodeSame('200');
 
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $tasks = $em->getRepository(Task::class)->findAll();
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $tasks = $manager->getRepository(Task::class)->findAll();
         $nbTasks = count($tasks);
         $this->assertEquals($nbTasks, $this->crawler->filter('div.thumbnail')->count());
     }
@@ -42,7 +42,7 @@ class ListTaskControllerTest extends TaskControllerTest
         $this->loginAUser();
         $task = $this->addTask();
         $this->client->request('GET', '/tasks/' . $task->getId() . '/delete');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $taskInDatabase = $this->getTaskInDatabase('newTitle');
         $this->assertSame(null, $taskInDatabase);
         $this->assertSelectorExists('div.alert-success');
@@ -59,12 +59,12 @@ class ListTaskControllerTest extends TaskControllerTest
         $otherUser = $this->getUserInDatabase('otherUser');
         $task->setUser($otherUser);
 
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $em->persist($task);
-        $em->flush();
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $manager->persist($task);
+        $manager->flush();
         
         $this->client->request('GET', '/tasks/' . $task->getId() . '/delete');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $taskInDatabase = $this->getTaskInDatabase('otherTitle');
         
         $this->assertSame($task->getId(), $taskInDatabase->getId());
@@ -79,7 +79,7 @@ class ListTaskControllerTest extends TaskControllerTest
         $this->loginAUser();
         $task = $this->addAnonymTask();
         $this->client->request('GET', '/tasks/' . $task->getId() . '/delete');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $taskInDatabase = $this->getTaskInDatabase('anonymTitle');
 
         $this->assertSame($task->getId(), $taskInDatabase->getId());
@@ -93,7 +93,7 @@ class ListTaskControllerTest extends TaskControllerTest
         $this->loginAnAdmin();
         $task = $this->addAnonymTask();
         $this->client->request('GET', '/tasks/' . $task->getId() . '/delete');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $taskInDatabase = $this->getTaskInDatabase('anonymTitle');
 
         $this->assertEquals(null, $taskInDatabase);
@@ -105,14 +105,14 @@ class ListTaskControllerTest extends TaskControllerTest
         $this->loginAUser();
         $task = $this->addTask();
         $this->client->request('GET', '/tasks/' . $task->getId() . '/toggle');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $taskInDatabase = $this->getTaskInDatabase('newTitle');
         
         $this->assertEquals(true, $taskInDatabase->getIsDone());
         $this->assertSelectorExists('div.alert-success');
 
         $this->client->request('GET', '/tasks/' . $task->getId() . '/toggle');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $taskInDatabase = $this->getTaskInDatabase('newTitle');
 
         $this->assertEquals(false, $taskInDatabase->getIsDone());

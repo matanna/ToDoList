@@ -4,9 +4,10 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Mime\Encoder\EncoderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -15,9 +16,14 @@ class UserController extends AbstractController
     /**
      * @Route("/users", name="user_list")
      */
-    public function listAction()
+    public function listAction(CacheInterface $cache)
     {
-        $users = $this->getDoctrine()->getRepository('App:User')->findAll();
+        $users = $cache->get('item_users', function(ItemInterface $item) {
+            $item->expiresAfter(3600);
+            $users = $this->getDoctrine()->getRepository('App:User')->findAll();
+            
+            return $users;
+        });
         
         return $this->render('user/list.html.twig', ['users' => $users]);
     }
@@ -34,12 +40,12 @@ class UserController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $em = $this->getDoctrine()->getManager();
+            $manager = $this->getDoctrine()->getManager();
             $password = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $em->persist($user);
-            $em->flush();
+            $manager->persist($user);
+            $manager->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été ajouté.");
 
@@ -66,10 +72,10 @@ class UserController extends AbstractController
                 $user->setRoles(null); 
             }
             
-            $em = $this->getDoctrine()->getManager();
+            $manager = $this->getDoctrine()->getManager();
 
-            $em->persist($user);
-            $em->flush();
+            $manager->persist($user);
+            $manager->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
 
