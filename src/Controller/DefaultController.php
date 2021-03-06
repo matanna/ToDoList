@@ -13,8 +13,14 @@ class DefaultController extends AbstractController
      */
     public function indexAction(UserInterface $user)
     {
-        return $this->render('default/index.html.twig', [
+        $response = $this->render('default/index.html.twig', [
             'user' => $user
         ]);
+
+        // cache publicly for 3600 seconds
+        $response->setPublic();
+        $response->setMaxAge(3600);
+
+        return $response;
     }
 }

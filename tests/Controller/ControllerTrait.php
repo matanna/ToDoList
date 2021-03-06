@@ -26,8 +26,8 @@ trait ControllerTrait
 
     protected function getUserInDatabase($username)
     {
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        return $em->getRepository(User::class)->findOneBy(['username' => $username]);
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        return $manager->getRepository(User::class)->findOneBy(['username' => $username]);
     }
 
     protected function loginAnAdmin()
@@ -56,25 +56,25 @@ trait ControllerTrait
 
     protected function deleteUser($username)
     {
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
-        $em->remove($user);
-        $em->flush();
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $user = $manager->getRepository(User::class)->findOneBy(['username' => $username]);
+        $manager->remove($user);
+        $manager->flush();
     }
 
     protected function getTaskInDatabase($title)
     {
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        return $em->getRepository(Task::class)->findOneBy(['title' => $title]);
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        return $manager->getRepository(Task::class)->findOneBy(['title' => $title]);
     }
 
     protected function deleteTask($title)
     {
-        $em = self::$container->get('doctrine.orm.entity_manager');
-        $task = $em->getRepository(Task::class)->findOneBy(['title' => $title]);
-        $em->remove($task);
-        $em->flush();
-        return $em->getRepository(Task::class)->findOneBy(['title' => $title]);
+        $manager = self::$container->get('doctrine.orm.entity_manager');
+        $task = $manager->getRepository(Task::class)->findOneBy(['title' => $title]);
+        $manager->remove($task);
+        $manager->flush();
+        return $manager->getRepository(Task::class)->findOneBy(['title' => $title]);
     }
 
 }

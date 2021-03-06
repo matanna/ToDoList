@@ -42,7 +42,7 @@ class CreateUserControllerTest extends UserControllerTest
     public function testCreateUserWithForm()
     {
         $crawler = $this->createUser();
-        $csrfToken = $this->client->getContainer()->get('security.csrf.token_manager')->getToken('user');
+        $this->client->getContainer()->get('security.csrf.token_manager')->getToken('user');
 
         $form = $crawler->selectButton('Ajouter')->form($this->formData());
         $crawler = $this->client->submit($form);
