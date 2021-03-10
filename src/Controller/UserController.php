@@ -19,7 +19,7 @@ class UserController extends AbstractController
     public function listAction(CacheInterface $cache)
     {
         $users = $cache->get('item_users', function(ItemInterface $item) {
-            $item->expiresAfter(3600);
+           $item->expiresAfter(3600);
             $users = $this->getDoctrine()->getRepository('App:User')->findAll();
             
             return $users;
