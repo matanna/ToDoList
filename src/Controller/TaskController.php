@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Form\TaskType;
+use App\Entity\Category;
 use App\Utils\ControlAuthor;
 use App\Utils\TaskRemoveAuthorization;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -20,12 +21,43 @@ class TaskController extends AbstractController
     public function listAction(ControlAuthor $controlAuthor, CacheInterface $cache)
     {
         $tasks = $this->getDoctrine()->getRepository('App:Task')->findAll();
-
+        $categories = $this->getDoctrine()->getRepository('App:Category')->findAll();
+        
         foreach ($tasks as $task) {
             $controlAuthor->controlTaskAuthor($task);
         }
 
-        return $this->render('task/list.html.twig', ['tasks' => $tasks]);
+        return $this->render('task/list.html.twig', ['tasks' => $tasks, 'categories' => $categories]);
+    }
+
+    /**
+     * @Route("/tasks/{id}/category", name="task_category")
+     */
+    public function taskCategoryAction(ControlAuthor $controlAuthor, Category $category)
+    {
+        $tasks = $this->getDoctrine()->getRepository('App:Task')->findBy(['category' => $category]);
+        $categories = $this->getDoctrine()->getRepository('App:Category')->findAll();
+        
+        foreach ($tasks as $task) {
+            $controlAuthor->controlTaskAuthor($task);
+        }
+
+        return $this->render('task/list.html.twig', ['tasks' => $tasks, 'categories' => $categories]);
+    }
+
+    /**
+     * @Route("/tasks/without-category", name="task_without_category")
+     */
+    public function taskWithoutCategoryAction(ControlAuthor $controlAuthor)
+    {
+        $tasks = $this->getDoctrine()->getRepository('App:Task')->findBy(['category' => null]);
+        $categories = $this->getDoctrine()->getRepository('App:Category')->findAll();
+        
+        foreach ($tasks as $task) {
+            $controlAuthor->controlTaskAuthor($task);
+        }
+
+        return $this->render('task/list.html.twig', ['tasks' => $tasks, 'categories' => $categories]);
     }
 
     /**

@@ -2,9 +2,10 @@
 
 namespace App\DataFixtures;
 
+use DateTime;
 use App\Entity\Task;
 use App\Form\TaskType;
-use DateTime;
+use App\Entity\Category;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
@@ -16,6 +17,13 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $faker = \Faker\Factory::create();
+
+        for ($j = 0; $j < 5; $j++) {
+            $category = new Category();
+            $category->setName($faker->sentence($nbWord = 1, $variableNbWords = false));
+
+            $manager->persist($category);
+        }
 
         for ($i = 0; $i < 20; $i++) {
             $task = new Task();

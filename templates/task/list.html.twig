@@ -3,7 +3,14 @@
 {% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_content.jpg') }}" alt="todo list">{% endblock %}
 
 {% block body %}
-    <a href="{{ path('task_create') }}" class="btn btn-info pull-right">Créer une tâche</a>
+    <p><a href="{{ path('task_create') }}" class="btn btn-info pull-right">Créer une tâche</a></p>
+    <p> 
+        {% for category in categories %}
+        <a href="{{ path('task_category', {'id': category.id }) }}" class="btn btn-info mr-4">{{ category.name }}</a>
+        {% endfor %}
+        <a href="{{ path('task_without_category') }}" class="btn btn-info mr-4">Sans catégorie</a>
+        <a href="{{ path('task_list') }}" class="btn btn-info mr-4">Tout</a>
+    </p>
     <div class="row">
         {% for task in tasks %}
         <div class="col-sm-4 col-lg-4 col-md-4">
@@ -14,7 +21,14 @@
                     </h4>
                     <h4><a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a></h4>
                     <p>{{ task.content }}</p>
-                    <p>Auteur : {{ task.user.username }}</p>
+                    <p>
+                        Auteur : {{ task.user.username }}
+                        {%if task.category == null %}
+                        <span class="badge badge-secondary">Sans catégorie</span>
+                        {% else %}
+                        <span class="badge badge-secondary">{{ task.category.name }}</span>
+                        {% endif %}
+                    </p>
                 </div>
                 <div>
                     <form action="{{ path('task_toggle', {'id' : task.id }) }}">
