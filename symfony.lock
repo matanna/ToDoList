@@ -384,6 +384,9 @@
     "symfony/options-resolver": {
         "version": "v4.4.19"
     },
+    "symfony/orm-pack": {
+        "version": "v2.1.0"
+    },
     "symfony/phpunit-bridge": {
         "version": "5.1",
         "recipe": {
@@ -434,6 +437,9 @@
     },
     "symfony/property-access": {
         "version": "v4.4.19"
+    },
+    "symfony/proxy-manager-bridge": {
+        "version": "v4.4.20"
     },
     "symfony/routing": {
         "version": "4.2",
