@@ -11,15 +11,15 @@ Développeur : Mathieu Bonhommeau
 La collaboration à plusieurs est de mise pour ce projet. Il faut donc respecter quelques règles.
 
 - **Le versionnage du projet doit se faire avec Git et Github.**
-  Pour contribuer au projet, il va donc falloir cloner le repository Github : <link>  https://github.com/matanna/ToDoList,  en local, sur sa machine.
+  Pour contribuer au projet, il va donc falloir cloner le repository Github : <link>https://github.com/matanna/ToDoList,  en local, sur sa machine.
   
 - **Il faut également utiliser un *Workflow* particulier : GitFlow.**
   Voici un lien explicatif de ce dernier : 
-  <link> https://danielkummer.github.io/git-flow-cheatsheet/index.fr_FR.html.
+  <link>https://danielkummer.github.io/git-flow-cheatsheet/index.fr_FR.html,
   Pour travailler sur le projet, il faudra donc suivre le système de travail de **GitFlow**
   *(Ex : Pour développer une fonctionnalité, il faudra créer une branche  "feature")*
 
-- **Bien respecter les standards de développement Php. **
+- **Bien respecter les standards de développement Php.**
   - L'application a été créé sur l'éditeur de code **VsCode** avec l'extension **PhpItelephense** qui assure le respect des standards de formatage du code Php. 
   Il faut continuer sur cet axe.
   

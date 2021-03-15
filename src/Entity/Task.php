@@ -106,6 +106,7 @@ class Task
         if ($this->user) {
             return $this;
         }
+        
         $this->user = $user;
 
         return $this;
