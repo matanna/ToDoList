@@ -2,9 +2,10 @@
 
 namespace App\DataFixtures;
 
+use DateTime;
 use App\Entity\Task;
 use App\Form\TaskType;
-use DateTime;
+use App\Entity\Category;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
