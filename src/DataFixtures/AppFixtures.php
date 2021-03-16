@@ -18,13 +18,6 @@ class AppFixtures extends Fixture
     {
         $faker = \Faker\Factory::create();
 
-        for ($j = 0; $j < 5; $j++) {
-            $category = new Category();
-            $category->setName($faker->sentence($nbWord = 1, $variableNbWords = false));
-
-            $manager->persist($category);
-        }
-
         for ($i = 0; $i < 20; $i++) {
             $task = new Task();
             $task->setCreatedAt($faker->dateTimeBetween('-2 years', 'now'));
