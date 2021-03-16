@@ -14,7 +14,14 @@
                     </h4>
                     <h4><a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a></h4>
                     <p>{{ task.content }}</p>
-                    <p>Auteur : {{ task.user.username }}</p>
+                    <p>
+                        Auteur : {{ task.user.username }}
+                        {%if task.category == null %}
+                        <span class="badge badge-secondary">Sans catégorie</span>
+                        {% else %}
+                        <span class="badge badge-secondary">{{ task.category.name }}</span>
+                        {% endif %}
+                    </p>
                 </div>
                 <div>
                     <form action="{{ path('task_toggle', {'id' : task.id }) }}">
